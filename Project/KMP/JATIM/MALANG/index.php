@@ -35,6 +35,15 @@
             if (!function_exists('mysqli_query') || !isset($conn) || !$conn) {
                 echo "<tr><td colspan='9' class='text-center text-danger'>Terjadi kesalahan koneksi database.</td></tr>";
             } else {
+                @mysqli_query($conn, "CREATE TABLE IF NOT EXISTS hasil_desa (id INT AUTO_INCREMENT PRIMARY KEY, desa_id INT NOT NULL, filename VARCHAR(255) NOT NULL, mime VARCHAR(100) NOT NULL, uploaded_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, INDEX(desa_id))");
+                $pdfMap = [];
+                $qpdf = @mysqli_query($conn, "SELECT id, desa_id, filename FROM hasil_desa WHERE mime='application/pdf' ORDER BY uploaded_at DESC");
+                if ($qpdf) {
+                    while($p = mysqli_fetch_assoc($qpdf)) {
+                        $did = (int)$p['desa_id'];
+                        if (!isset($pdfMap[$did])) { $pdfMap[$did] = $p; }
+                    }
+                }
                 $sql = "SELECT * FROM data_desa ORDER BY id ASC";
                 $res = mysqli_query($conn, $sql);
                 if (!$res) {
@@ -52,7 +61,14 @@
                             $ket = htmlspecialchars((string)($row['keterangan'] ?? ''), ENT_QUOTES, 'UTF-8');
                             $mulai = !empty($row['tgl_mulai']) ? date('d M Y', strtotime($row['tgl_mulai'])) : '-';
                             $target = !empty($row['target_selesai']) ? date('d M Y', strtotime($row['target_selesai'])) : '-';
-                            $hasilLink = '<a class="btn btn-sm btn-link" href="/Project/KMP/JATIM/MALANG/hasil.php?desa='.(int)$row['id'].'">Lihat</a>';
+                            $desaId = (int)$row['id'];
+                            $lihatLink = '<a class="btn btn-sm btn-link" href="/Project/KMP/JATIM/MALANG/hasil.php?desa='.$desaId.'">Lihat</a>';
+                            if (isset($pdfMap[$desaId])) {
+                                $pdfBtn = '<a class="btn btn-sm btn-secondary" href="/Project/KMP/JATIM/MALANG/download.php?id='.(int)$pdfMap[$desaId]['id'].'">Unduh PDF</a>';
+                            } else {
+                                $pdfBtn = '<span class="text-muted">Tidak ada PDF</span>';
+                            }
+                            $hasilLink = '<div class="d-flex gap-2">'.$lihatLink.$pdfBtn.'</div>';
                             echo "<tr>
                                     <td class='text-center'>{$no}</td>
                                     <td>{$nama}</td>
