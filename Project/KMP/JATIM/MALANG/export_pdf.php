@@ -12,56 +12,37 @@ include __DIR__ . '/config.php';
 
 date_default_timezone_set('Asia/Jakarta');
 
-function __val_yes($v) {
-    $t = strtolower(trim((string)$v));
-    if ($t === '✓' || $t === '✔' || $t === 'v' || $t === '√' || $t === 'y' || $t === 'ya' || $t === '1' || $t === 'true') {
-        return true;
-    }
-    return false;
-}
+function __val_yes($v) { return trim((string)$v) === '✓'; }
 
-// Ambil data dari view; jika gagal, fallback dari data_desa
-$res_tabel = @mysqli_query($conn, "SELECT * FROM view_laporan_pdf");
-$res_rekap = @mysqli_query($conn, "SELECT * FROM view_rekap_pdf");
-
+// Ambil data langsung dari data_desa agar sinkron dengan index.php
 $rows = [];
-if ($res_tabel && mysqli_num_rows($res_tabel) > 0) {
-    while ($r = mysqli_fetch_assoc($res_tabel)) { $rows[] = $r; }
-} else {
-    // Fallback: bangun dari data_desa
-    $q = @mysqli_query($conn, "SELECT id, nama_desa, kecamatan, produksi, terpasang, keterangan FROM data_desa ORDER BY id ASC");
-    $no = 1;
-    if ($q) {
-        while($r = mysqli_fetch_assoc($q)) {
-            $rows[] = [
-                'No' => $no++,
-                'Nama Desa / Kelurahan' => $r['nama_desa'],
-                'Kecamatan' => $r['kecamatan'],
-                'Produksi' => $r['produksi'],
-                'Terpasang' => $r['terpasang'],
-                'Ket' => $r['keterangan'] ?? ''
-            ];
-        }
+$q = @mysqli_query($conn, "SELECT id, nama_desa, kecamatan, produksi, terpasang, keterangan FROM data_desa ORDER BY id ASC");
+$no = 1;
+if ($q) {
+    while($r = mysqli_fetch_assoc($q)) {
+        $rows[] = [
+            'No' => $no++,
+            'Nama Desa / Kelurahan' => $r['nama_desa'],
+            'Kecamatan' => $r['kecamatan'],
+            'Produksi' => $r['produksi'],
+            'Terpasang' => $r['terpasang'],
+            'Ket' => $r['keterangan'] ?? ''
+        ];
     }
 }
 
-$rekaps = [];
-if ($res_rekap && mysqli_num_rows($res_rekap) > 0) {
-    while ($rk = mysqli_fetch_assoc($res_rekap)) { $rekaps[] = $rk; }
-} else {
-    // Fallback rekap sederhana
-    $total = count($rows);
-    $prod = 0; $pasang = 0;
-    foreach($rows as $r) {
-        if (__val_yes($r['Produksi'] ?? '')) $prod++;
-        if (__val_yes($r['Terpasang'] ?? '')) $pasang++;
-    }
-    $rekaps = [
-        ['Label' => 'Total Desa', 'Jumlah' => $total],
-        ['Label' => 'Sudah Produksi', 'Jumlah' => $prod],
-        ['Label' => 'Sudah Terpasang', 'Jumlah' => $pasang]
-    ];
+// Rekap sederhana dari data yang sama (mengikuti logika index.php: hanya '✓' dianggap ya)
+$total = count($rows);
+$prod = 0; $pasang = 0;
+foreach($rows as $r) {
+    if (__val_yes($r['Produksi'] ?? '')) $prod++;
+    if (__val_yes($r['Terpasang'] ?? '')) $pasang++;
 }
+$rekaps = [
+    ['Label' => 'Total Desa', 'Jumlah' => $total],
+    ['Label' => 'Sudah Produksi', 'Jumlah' => $prod],
+    ['Label' => 'Sudah Terpasang', 'Jumlah' => $pasang]
+];
 
 // Susun HTML (inti konten)
 $html = '
