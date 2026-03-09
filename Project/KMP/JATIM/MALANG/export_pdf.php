@@ -70,6 +70,7 @@ $html = '
         .rekap-table { width: 50%; margin-top: 12px; border: none; }
         .rekap-table td { border: none; padding: 2px 4px; }
         .footer-note { font-size: 8pt; margin-top: 10px; }
+        .sym { font-family: "DejaVu Sans", "Noto Sans Symbols", Arial, sans-serif; }
     </style>
 </head>
 <body>
@@ -94,15 +95,19 @@ foreach ($rows as $row) {
     $no = htmlspecialchars((string)$row['No'], ENT_QUOTES, 'UTF-8');
     $desa = htmlspecialchars((string)$row['Nama Desa / Kelurahan'], ENT_QUOTES, 'UTF-8');
     $kec = htmlspecialchars((string)$row['Kecamatan'], ENT_QUOTES, 'UTF-8');
-    $prod = htmlspecialchars((string)$row['Produksi'], ENT_QUOTES, 'UTF-8');
-    $ter = htmlspecialchars((string)$row['Terpasang'], ENT_QUOTES, 'UTF-8');
+    $rawProd = (string)($row['Produksi'] ?? '');
+    $rawTer = (string)($row['Terpasang'] ?? '');
+    $isProd = in_array($rawProd, ['✓','✔','Y','Ya','1'], true);
+    $isTer = in_array($rawTer, ['✓','✔','Y','Ya','1'], true);
+    $prod = $isProd ? '&#10003;' : '&#10007;';
+    $ter = $isTer ? '&#10003;' : '&#10007;';
     $ket = htmlspecialchars((string)($row['Ket'] ?? ''), ENT_QUOTES, 'UTF-8');
     $html .= '<tr>
         <td class="center">'.$no.'</td>
         <td>'.$desa.'</td>
         <td>'.$kec.'</td>
-        <td class="center">'.$prod.'</td>
-        <td class="center">'.$ter.'</td>
+        <td class="center sym">'.$prod.'</td>
+        <td class="center sym">'.$ter.'</td>
         <td>'.$ket.'</td>
     </tr>';
 }

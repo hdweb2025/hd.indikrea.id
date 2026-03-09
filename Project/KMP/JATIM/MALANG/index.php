@@ -9,6 +9,7 @@
     <style>
         .check-green { color: green; font-weight: bold; }
         .cross-red { color: red; font-weight: bold; }
+        .sym { font-family: "Segoe UI Symbol","Noto Sans Symbols","DejaVu Sans",Arial,sans-serif; }
     </style>
 </head>
 <body class="bg-light">
@@ -56,8 +57,8 @@
                         while($row = mysqli_fetch_assoc($res)) {
                             $nama = htmlspecialchars($row['nama_desa'], ENT_QUOTES, 'UTF-8');
                             $kec  = htmlspecialchars($row['kecamatan'], ENT_QUOTES, 'UTF-8');
-                            $prod = ($row['produksi'] === '✓') ? '<span class="check-green">✓</span>' : '<span class="cross-red">✗</span>';
-                            $pasang = ($row['terpasang'] === '✓') ? '<span class="check-green">✓</span>' : '<span class="cross-red">✗</span>';
+                            $prod = ($row['produksi'] === '✓') ? '<span class="check-green sym">&#10003;</span>' : '<span class="cross-red sym">&#10007;</span>';
+                            $pasang = ($row['terpasang'] === '✓') ? '<span class="check-green sym">&#10003;</span>' : '<span class="cross-red sym">&#10007;</span>';
                             $ket = htmlspecialchars((string)($row['keterangan'] ?? ''), ENT_QUOTES, 'UTF-8');
                             $mulai = !empty($row['tgl_mulai']) ? date('d M Y', strtotime($row['tgl_mulai'])) : '-';
                             $target = !empty($row['target_selesai']) ? date('d M Y', strtotime($row['target_selesai'])) : '-';
