@@ -13,7 +13,14 @@
 </head>
 <body class="bg-light">
 <div class="container my-5 shadow-sm p-4 bg-white rounded">
-    <h2 class="text-center mb-4">Laporan Pemasangan Letter Akrilik</h2>
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="mb-0">Laporan Pemasangan Letter Akrilik</h2>
+        <div class="btn-group">
+            <a href="#" class="btn btn-primary btn-sm">Portofolio</a>
+            <a href="#" class="btn btn-outline-primary btn-sm">Project</a>
+            <a href="#" class="btn btn-success btn-sm">Tambah Project</a>
+        </div>
+    </div>
     <table class="table table-bordered table-striped">
         <thead class="table-dark text-center">
             <tr>
