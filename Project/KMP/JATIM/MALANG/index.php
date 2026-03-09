@@ -64,12 +64,11 @@
                             $target = !empty($row['target_selesai']) ? date('d M Y', strtotime($row['target_selesai'])) : '-';
                             $desaId = (int)$row['id'];
                             $lihatLink = '<a class="btn btn-sm btn-link" href="/Project/KMP/JATIM/MALANG/hasil.php?desa='.$desaId.'">Lihat</a>';
+                            $hasilLink = '<div class="d-flex gap-2">'.$lihatLink;
                             if (isset($pdfMap[$desaId])) {
-                                $pdfBtn = '<a class="btn btn-sm btn-secondary" href="/Project/KMP/JATIM/MALANG/download.php?id='.(int)$pdfMap[$desaId]['id'].'">Unduh PDF</a>';
-                            } else {
-                                $pdfBtn = '<span class="text-muted">Tidak ada PDF</span>';
+                                $hasilLink .= '<a class="btn btn-sm btn-secondary" href="/Project/KMP/JATIM/MALANG/download.php?id='.(int)$pdfMap[$desaId]['id'].'">Unduh PDF</a>';
                             }
-                            $hasilLink = '<div class="d-flex gap-2">'.$lihatLink.$pdfBtn.'</div>';
+                            $hasilLink .= '</div>';
                             echo "<tr>
                                     <td class='text-center'>{$no}</td>
                                     <td>{$nama}</td>
