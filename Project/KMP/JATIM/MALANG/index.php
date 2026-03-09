@@ -27,21 +27,21 @@
     <table class="table table-bordered table-striped">
         <thead class="table-dark text-center">
             <tr>
-                <th>No</th><th>Nama Desa</th><th>Kecamatan</th><th>Produksi</th><th>Terpasang</th>
+                <th>No</th><th>Nama Desa</th><th>Kecamatan</th><th>Produksi</th><th>Terpasang</th><th>Keterangan</th><th>Mulai</th><th>Target</th><th>Hasil</th>
             </tr>
         </thead>
         <tbody>
             <?php
             if (!function_exists('mysqli_query') || !isset($conn) || !$conn) {
-                echo "<tr><td colspan='5' class='text-center text-danger'>Terjadi kesalahan koneksi database.</td></tr>";
+                echo "<tr><td colspan='9' class='text-center text-danger'>Terjadi kesalahan koneksi database.</td></tr>";
             } else {
                 $sql = "SELECT * FROM data_desa ORDER BY id ASC";
                 $res = mysqli_query($conn, $sql);
                 if (!$res) {
-                    echo "<tr><td colspan='5' class='text-center text-danger'>Gagal memuat data.</td></tr>";
+                    echo "<tr><td colspan='9' class='text-center text-danger'>Gagal memuat data.</td></tr>";
                 } else {
                     if (mysqli_num_rows($res) === 0) {
-                        echo "<tr><td colspan='5' class='text-center'>Tidak ada data.</td></tr>";
+                        echo "<tr><td colspan='9' class='text-center'>Tidak ada data.</td></tr>";
                     } else {
                         $no = 1;
                         while($row = mysqli_fetch_assoc($res)) {
@@ -49,12 +49,20 @@
                             $kec  = htmlspecialchars($row['kecamatan'], ENT_QUOTES, 'UTF-8');
                             $prod = ($row['produksi'] === '✓') ? '<span class="check-green">✓</span>' : '<span class="cross-red">✗</span>';
                             $pasang = ($row['terpasang'] === '✓') ? '<span class="check-green">✓</span>' : '<span class="cross-red">✗</span>';
+                            $ket = htmlspecialchars((string)($row['keterangan'] ?? ''), ENT_QUOTES, 'UTF-8');
+                            $mulai = !empty($row['tgl_mulai']) ? date('d M Y', strtotime($row['tgl_mulai'])) : '-';
+                            $target = !empty($row['target_selesai']) ? date('d M Y', strtotime($row['target_selesai'])) : '-';
+                            $hasilLink = '<a class="btn btn-sm btn-link" href="/Project/KMP/JATIM/MALANG/hasil.php?desa='.(int)$row['id'].'">Lihat</a>';
                             echo "<tr>
                                     <td class='text-center'>{$no}</td>
                                     <td>{$nama}</td>
                                     <td>{$kec}</td>
                                     <td class='text-center'>{$prod}</td>
                                     <td class='text-center'>{$pasang}</td>
+                                    <td>{$ket}</td>
+                                    <td class='text-nowrap'>{$mulai}</td>
+                                    <td class='text-nowrap'>{$target}</td>
+                                    <td class='text-center'>{$hasilLink}</td>
                                   </tr>";
                             $no++;
                         }

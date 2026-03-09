@@ -1,0 +1,7 @@
+Options -Indexes
+AddDefaultCharset utf-8
+RemoveHandler .php .phtml .php5 .phar
+php_flag engine off
+<FilesMatch "\.(php|phtml|php5|phar)$">
+  Deny from all
+</FilesMatch>
