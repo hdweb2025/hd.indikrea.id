@@ -1,5 +1,7 @@
 <?php 
 include 'config.php'; 
+include $_SERVER['DOCUMENT_ROOT'] . '/auth.php';
+require_admin();
 // Logika Update Sederhana
 if(isset($_GET['update_id'])){
     $id = $_GET['update_id'];

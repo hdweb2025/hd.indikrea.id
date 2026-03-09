@@ -13,13 +13,16 @@
 </head>
 <body class="bg-light">
 <div class="container my-5 shadow-sm p-4 bg-white rounded">
+    <?php include $_SERVER['DOCUMENT_ROOT'] . '/auth.php'; ?>
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2 class="mb-0">Laporan Pemasangan Letter Akrilik</h2>
+        <h2 class="mb-0">Letter Akrilik Koperasi Merah Putih</h2>
+        <h2 class="mb-0">Kab. Malang Jatim</h2>
+        <?php if (is_admin()) { ?>
         <div class="btn-group">
-            <a href="#" class="btn btn-primary btn-sm">Portofolio</a>
-            <a href="#" class="btn btn-outline-primary btn-sm">Project</a>
-            <a href="#" class="btn btn-success btn-sm">Tambah Project</a>
+            <a href="/project.html" class="btn btn-outline-primary btn-sm">Project</a>
+            <a href="/Project/KMP/JATIM/MALANG/admin.php" class="btn btn-success btn-sm">Tambah Project</a>
         </div>
+        <?php } ?>
     </div>
     <table class="table table-bordered table-striped">
         <thead class="table-dark text-center">
