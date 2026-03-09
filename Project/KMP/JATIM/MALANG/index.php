@@ -1,4 +1,4 @@
-<?php include 'config.php'; ?>
+<?php require_once __DIR__ . '/config.php'; ?>
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -29,28 +29,32 @@
         </thead>
         <tbody>
             <?php
-            $sql = "SELECT * FROM data_desa ORDER BY id ASC";
-            $res = mysqli_query($conn, $sql);
-            if (!$res) {
-                echo "<tr><td colspan='5' class='text-center text-danger'>Gagal memuat data.</td></tr>";
+            if (!function_exists('mysqli_query') || !isset($conn) || !$conn) {
+                echo "<tr><td colspan='5' class='text-center text-danger'>Terjadi kesalahan koneksi database.</td></tr>";
             } else {
-                if (mysqli_num_rows($res) === 0) {
-                    echo "<tr><td colspan='5' class='text-center'>Tidak ada data.</td></tr>";
+                $sql = "SELECT * FROM data_desa ORDER BY id ASC";
+                $res = mysqli_query($conn, $sql);
+                if (!$res) {
+                    echo "<tr><td colspan='5' class='text-center text-danger'>Gagal memuat data.</td></tr>";
                 } else {
-                    $no = 1;
-                    while($row = mysqli_fetch_assoc($res)) {
-                        $nama = htmlspecialchars($row['nama_desa'], ENT_QUOTES, 'UTF-8');
-                        $kec  = htmlspecialchars($row['kecamatan'], ENT_QUOTES, 'UTF-8');
-                        $prod = ($row['produksi'] === '✓') ? '<span class="check-green">✓</span>' : '<span class="cross-red">✗</span>';
-                        $pasang = ($row['terpasang'] === '✓') ? '<span class="check-green">✓</span>' : '<span class="cross-red">✗</span>';
-                        echo "<tr>
-                                <td class='text-center'>{$no}</td>
-                                <td>{$nama}</td>
-                                <td>{$kec}</td>
-                                <td class='text-center'>{$prod}</td>
-                                <td class='text-center'>{$pasang}</td>
-                              </tr>";
-                        $no++;
+                    if (mysqli_num_rows($res) === 0) {
+                        echo "<tr><td colspan='5' class='text-center'>Tidak ada data.</td></tr>";
+                    } else {
+                        $no = 1;
+                        while($row = mysqli_fetch_assoc($res)) {
+                            $nama = htmlspecialchars($row['nama_desa'], ENT_QUOTES, 'UTF-8');
+                            $kec  = htmlspecialchars($row['kecamatan'], ENT_QUOTES, 'UTF-8');
+                            $prod = ($row['produksi'] === '✓') ? '<span class="check-green">✓</span>' : '<span class="cross-red">✗</span>';
+                            $pasang = ($row['terpasang'] === '✓') ? '<span class="check-green">✓</span>' : '<span class="cross-red">✗</span>';
+                            echo "<tr>
+                                    <td class='text-center'>{$no}</td>
+                                    <td>{$nama}</td>
+                                    <td>{$kec}</td>
+                                    <td class='text-center'>{$prod}</td>
+                                    <td class='text-center'>{$pasang}</td>
+                                  </tr>";
+                            $no++;
+                        }
                     }
                 }
             }
