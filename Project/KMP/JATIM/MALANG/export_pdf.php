@@ -10,22 +10,7 @@ foreach ($autoloads as $a) {
 }
 include __DIR__ . '/config.php';
 
-if (!class_exists('Dompdf\\Dompdf')) {
-    http_response_code(500);
-    echo "Dompdf tidak ditemukan. Pastikan terpasang via Composer dan vendor/autoload.php dapat diakses.";
-    exit;
-}
-
-use Dompdf\Dompdf;
-use Dompdf\Options;
-
 date_default_timezone_set('Asia/Jakarta');
-
-$options = new Options();
-$options->set('isHtml5ParserEnabled', true);
-$options->set('isRemoteEnabled', true);
-$options->set('defaultFont', 'DejaVu Sans'); // dukung UTF-8 (✓/✗)
-$dompdf = new Dompdf($options);
 
 // Ambil data dari view; jika gagal, fallback dari data_desa
 $res_tabel = @mysqli_query($conn, "SELECT * FROM view_laporan_pdf");
@@ -70,7 +55,7 @@ if ($res_rekap && mysqli_num_rows($res_rekap) > 0) {
     ];
 }
 
-// Susun HTML
+// Susun HTML (inti konten)
 $html = '
 <html>
 <head>
@@ -136,9 +121,33 @@ $html .= '</table>';
 $html .= '<div class="footer-note">Update: ' . date('l, d F Y') . '</div>';
 $html .= '</body></html>';
 
-// Render PDF
-$dompdf->loadHtml($html, 'UTF-8');
-$dompdf->setPaper('A4', 'portrait');
-$dompdf->render();
-$dompdf->stream("Laporan_KMP_Jatim_" . date('Ymd') . ".pdf", ["Attachment" => 1]);
-exit;
+// Jika Dompdf tersedia, render PDF. Jika tidak, tampilkan HTML siap cetak (fallback)
+$hasDompdf = class_exists('Dompdf\\Dompdf');
+if ($hasDompdf) {
+    // Inisialisasi Dompdf
+    $options = new Dompdf\Options();
+    $options->set('isHtml5ParserEnabled', true);
+    $options->set('isRemoteEnabled', true);
+    $options->set('defaultFont', 'DejaVu Sans'); // dukung UTF-8 (✓/✗)
+    $dompdf = new Dompdf\Dompdf($options);
+    $dompdf->loadHtml($html, 'UTF-8');
+    $dompdf->setPaper('A4', 'portrait');
+    $dompdf->render();
+    $dompdf->stream("Laporan_KMP_Jatim_" . date('Ymd') . ".pdf", ["Attachment" => 1]);
+    exit;
+} else {
+    header('Content-Type: text/html; charset=utf-8');
+    echo '<!DOCTYPE html><html lang="id"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">';
+    echo '<title>Laporan KMP Jatim - Cetak</title>';
+    echo '<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">';
+    echo '<style>@media print {.no-print{display:none}}</style></head><body class="bg-light">';
+    echo '<div class="container my-3">';
+    echo '<div class="d-flex justify-content-between align-items-center mb-2 no-print">';
+    echo '<div class="fw-bold">Laporan KMP Jatim</div>';
+    echo '<div class="d-flex gap-2"><a class="btn btn-secondary btn-sm" href="/Project/KMP/JATIM/MALANG/index.php">Kembali</a><button class="btn btn-dark btn-sm" onclick="window.print()">Cetak / Simpan PDF</button></div>';
+    echo '</div>';
+    echo '<div class="bg-white p-3 rounded shadow-sm">';
+    echo $html;
+    echo '</div></div></body></html>';
+    exit;
+}
