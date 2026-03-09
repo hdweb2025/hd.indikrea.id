@@ -1,0 +1,14 @@
+Options -Indexes
+AddDefaultCharset utf-8
+DirectoryIndex index.html index.php
+
+RewriteEngine On
+
+RewriteCond %{REQUEST_FILENAME} -f [OR]
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule ^ - [L]
+
+RewriteRule ^project/?$ project.html [L]
+RewriteRule ^kmp/?$ kmp.html [L]
+RewriteRule ^kmp/malang/?$ kmp-malang.php [L]
+RewriteRule ^kmp/malang/admin/?$ Project/KMP/JATIM/MALANG/admin.php [L]
