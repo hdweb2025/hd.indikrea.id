@@ -1,7 +1,7 @@
 <?php
 $host = "localhost";
 $user = "koperasi_mp";
-$pass = "CpAz:x!2";
+$pass = "@q;~@p;bw0Rp";
 $db   = "koperasi_mp";
 
 $conn = @mysqli_connect($host, $user, $pass, $db);
