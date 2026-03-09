@@ -1,8 +1,8 @@
 <?php
 $host = "localhost";
-$user = "koperasi_mp";
+$user = "u573188607_koperasi_mp";
 $pass = "@q;~@p;bw0Rp";
-$db   = "koperasi_mp";
+$db   = "u573188607_koperasi_mp";
 
 $conn = @mysqli_connect($host, $user, $pass, $db);
 if (!$conn) {
