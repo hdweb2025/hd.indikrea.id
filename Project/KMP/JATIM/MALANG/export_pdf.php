@@ -12,6 +12,14 @@ include __DIR__ . '/config.php';
 
 date_default_timezone_set('Asia/Jakarta');
 
+function __val_yes($v) {
+    $t = strtolower(trim((string)$v));
+    if ($t === '✓' || $t === '✔' || $t === 'v' || $t === '√' || $t === 'y' || $t === 'ya' || $t === '1' || $t === 'true') {
+        return true;
+    }
+    return false;
+}
+
 // Ambil data dari view; jika gagal, fallback dari data_desa
 $res_tabel = @mysqli_query($conn, "SELECT * FROM view_laporan_pdf");
 $res_rekap = @mysqli_query($conn, "SELECT * FROM view_rekap_pdf");
@@ -45,8 +53,8 @@ if ($res_rekap && mysqli_num_rows($res_rekap) > 0) {
     $total = count($rows);
     $prod = 0; $pasang = 0;
     foreach($rows as $r) {
-        if (($r['Produksi'] ?? '') === '✓') $prod++;
-        if (($r['Terpasang'] ?? '') === '✓') $pasang++;
+        if (__val_yes($r['Produksi'] ?? '')) $prod++;
+        if (__val_yes($r['Terpasang'] ?? '')) $pasang++;
     }
     $rekaps = [
         ['Label' => 'Total Desa', 'Jumlah' => $total],
@@ -95,10 +103,8 @@ foreach ($rows as $row) {
     $no = htmlspecialchars((string)$row['No'], ENT_QUOTES, 'UTF-8');
     $desa = htmlspecialchars((string)$row['Nama Desa / Kelurahan'], ENT_QUOTES, 'UTF-8');
     $kec = htmlspecialchars((string)$row['Kecamatan'], ENT_QUOTES, 'UTF-8');
-    $rawProd = (string)($row['Produksi'] ?? '');
-    $rawTer = (string)($row['Terpasang'] ?? '');
-    $isProd = in_array($rawProd, ['✓','✔','Y','Ya','1'], true);
-    $isTer = in_array($rawTer, ['✓','✔','Y','Ya','1'], true);
+    $isProd = __val_yes($row['Produksi'] ?? '');
+    $isTer = __val_yes($row['Terpasang'] ?? '');
     $prod = $isProd ? '&#10003;' : '&#10007;';
     $ter = $isTer ? '&#10003;' : '&#10007;';
     $ket = htmlspecialchars((string)($row['Ket'] ?? ''), ENT_QUOTES, 'UTF-8');
