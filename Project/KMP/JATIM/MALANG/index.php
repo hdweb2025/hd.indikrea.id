@@ -88,6 +88,11 @@
             ?>
         </tbody>
     </table>
+    <div class="mt-4 d-flex justify-content-end">
+        <a href="/Project/KMP/JATIM/MALANG/export_pdf.php" target="_blank" class="btn btn-outline-dark">
+            Download PDF
+        </a>
+    </div>
 </div>
 </body>
 </html>
