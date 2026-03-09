@@ -124,12 +124,14 @@ $html .= '</body></html>';
 // Jika Dompdf tersedia, render PDF. Jika tidak, tampilkan HTML siap cetak (fallback)
 $hasDompdf = class_exists('Dompdf\\Dompdf');
 if ($hasDompdf) {
-    // Inisialisasi Dompdf
-    $options = new Dompdf\Options();
+    // Inisialisasi Dompdf tanpa mereferensikan tipe secara statik (aman untuk linter)
+    $optionsClass = '\\Dompdf\\Options';
+    $dompdfClass = '\\Dompdf\\Dompdf';
+    $options = new $optionsClass();
     $options->set('isHtml5ParserEnabled', true);
     $options->set('isRemoteEnabled', true);
     $options->set('defaultFont', 'DejaVu Sans'); // dukung UTF-8 (✓/✗)
-    $dompdf = new Dompdf\Dompdf($options);
+    $dompdf = new $dompdfClass($options);
     $dompdf->loadHtml($html, 'UTF-8');
     $dompdf->setPaper('A4', 'portrait');
     $dompdf->render();
